@@ -1,0 +1,152 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Chanduuu
+{
+	class Program
+	{
+		public static string res = "";
+		public static string deptid11 = " ", deptid1 = " ", empid1 = " ", id = "";
+		public static int z = 0;
+		static void Main(string[] args)
+		{
+			int flag = 1;
+			while (flag == 1)
+			{
+				int ch;
+				Console.WriteLine("1. insert employee / department / projects");
+				Console.WriteLine("2.searching the employees with common department");
+				Console.WriteLine("3.search by empid in projects and return employye details");
+				Console.WriteLine("4.exit");
+				Console.WriteLine("5.search by department name and print projects related to it");
+				ch = int.Parse(Console.ReadLine());
+				string filename1 = @"C:\Users\Chandana T M\Desktop\empf.txt";
+				string filename2 = @"C:\Users\Chandana T M\Desktop\deptf.txt";
+				string filename3 = @"C:\Users\Chandana T M\Desktop\projf.txt";
+				int value2 = 2;
+				int value1 = 1;
+				int value3 = 3;
+				switch (ch)
+				{
+					case 1:
+						Console.WriteLine("1.insert employee 2.department 3. projects");
+						int ch1 = int.Parse(Console.ReadLine());
+						if (ch1 == 1)
+							writefiles(filename1, ch1);
+						else if (ch1 == 2)
+							writefiles(filename2, ch1);
+						else if (ch1 == 3)
+							writefiles(filename3, ch1); break;
+					case 4:
+						flag = 0; break;
+					case 2:
+						Console.WriteLine("ENTER THE DEPARTMENT NAME TO BE ENETERED");
+						string val = Console.ReadLine();
+						res = "";
+						readfiles(filename2, value2, val);
+						readfiles(filename1, value1, res);
+						break;
+					case 3:
+						Console.WriteLine("ENTER THE MANAGER EMPLOYEE ID TO BE ENETERED");
+						int ch2 = int.Parse(Console.ReadLine());
+						res = "";
+						id = "";
+						readfiles(filename3, value3, ch2.ToString());
+						if (z == 1)
+							readfiles(filename1, value1, id);
+						break;
+					case 5:
+						Console.WriteLine("ENTER THE DEPARTMENT NAME TO BE ENETERED");
+						string val1 = Console.ReadLine();
+						res = "";
+						readfiles(filename2, value2, val1);
+						readfiles(filename3, value3, res);
+						break;
+				}
+			}
+		}
+		public static void writefiles(string filename, int ch1)
+		{
+			Employee ob = new Employee();
+			Console.WriteLine(ch1 + filename);
+			StreamWriter sw = new StreamWriter(filename, true);
+			using (sw)
+			{
+				switch (ch1)
+				{
+					case 1: ob.getemployee(); sw.WriteLine(ob.empdisplay()); break;
+					case 2: ob.getdepartment(); sw.WriteLine(ob.deptdisplay()); break;
+					case 3: ob.getprojects(); sw.WriteLine(ob.projdisplay()); break;
+					default: Console.WriteLine("WROMNG CHOICE"); break;
+				}
+			}
+			sw.Close();
+		}
+		public static void readfiles(string filename, int value, string val)
+		{
+			int flag = 0;
+			StreamReader sr1 = new StreamReader(filename, true);
+			using (sr1)
+			{
+				string line = sr1.ReadLine();
+				while (line != null)
+				{
+					int count = 1;
+					if (line.Contains(val))
+					{
+						foreach (var i in line)
+						{
+							if (i != ' ')
+							{
+								if (i != '|')
+								{
+									if (value == 1 && count == 1)
+										empid1 = empid1 + i;
+									else if (value == 1 && count == 5)
+										deptid1 = deptid1 + i;
+									else if (value == 2 && count == 1)
+										res = res + i;
+									else if (value == 3 && count == 2)
+										deptid11 = deptid11 + i;
+									else if (value == 3 && count == 4)
+									{
+										id = id + i;
+										z = 1;
+									}
+								}
+								else
+									count++;
+							}
+						}
+					}
+					if (value == 1 && res != "")
+					{
+						if (res == deptid1)
+							Console.WriteLine(line);
+					}
+					else if (value == 1 && res == "")
+					{
+						if (val == empid1)
+							Console.WriteLine(line);
+					}
+					else if (value == 3 && res != "")
+					{
+						if (res == deptid11)
+							Console.WriteLine(line);
+					}
+					line = sr1.ReadLine();
+					deptid1 = "";
+					deptid11 = "";
+					empid1 = "";
+				}
+			}
+			sr1.Close();
+		}
+	}
+}
+
+
